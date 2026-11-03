@@ -26,6 +26,7 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
       ApiConfig.authLogin,
       data: {
         'email': emailOrPhone,
+        'telefono': emailOrPhone,
         'password': password,
       },
     );
