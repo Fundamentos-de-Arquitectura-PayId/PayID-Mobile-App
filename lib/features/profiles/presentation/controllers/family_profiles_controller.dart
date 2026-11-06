@@ -5,17 +5,21 @@ import '../../data/repositories/family_profiles_repository.dart';
 import '../../domain/entities/family_member_entity.dart';
 
 final familyProfilesRepositoryProvider = Provider<FamilyProfilesRepository>((ref) {
-  final hive = ref.watch(hiveStorageProvider);
-  return FamilyProfilesRepository(hiveStorage: hive);
+  return FamilyProfilesRepository(
+    apiClient: ref.watch(apiClientProvider),
+    hiveStorage: ref.watch(hiveStorageProvider),
+  );
 });
 
 class FamilyProfilesState {
   final bool isLoading;
   final List<FamilyMemberEntity> members;
+  final String? errorMessage;
 
   const FamilyProfilesState({
     this.isLoading = false,
     this.members = const [],
+    this.errorMessage,
   });
 }
 
@@ -37,20 +41,56 @@ class FamilyProfilesController extends StateNotifier<FamilyProfilesState> {
   FamilyProfilesController({required this.repository, this.userId})
       : super(const FamilyProfilesState());
 
-  void loadMembers() {
+  Future<void> loadMembers() async {
     if (userId == null) return;
-    final list = repository.getMembers(userId!);
-    state = FamilyProfilesState(isLoading: false, members: list);
+    // Muestra la caché de inmediato mientras llega la respuesta del servidor
+    state = FamilyProfilesState(
+      isLoading: true,
+      members: repository.getCachedMembers(userId!),
+    );
+    try {
+      final list = await repository.getMembers(userId!);
+      if (mounted) state = FamilyProfilesState(members: list);
+    } catch (e) {
+      if (mounted) {
+        state = FamilyProfilesState(
+          members: state.members,
+          errorMessage: _message(e),
+        );
+      }
+    }
   }
 
-  Future<void> addMember(FamilyMemberEntity member) async {
-    await repository.addMember(member);
-    loadMembers();
+  /// Lanza la excepción para que la pantalla muestre el error.
+  Future<FamilyMemberEntity> addMember(FamilyMemberEntity member) async {
+    final created = await repository.addMember(member);
+    if (mounted) {
+      state = FamilyProfilesState(members: [...state.members, created]);
+    }
+    return created;
   }
 
   Future<void> removeMember(String memberId) async {
     if (userId == null) return;
-    await repository.removeMember(userId!, memberId);
-    loadMembers();
+    try {
+      await repository.removeMember(userId!, memberId);
+      if (mounted) {
+        state = FamilyProfilesState(
+          members: state.members.where((m) => m.id != memberId).toList(),
+        );
+      }
+    } catch (e) {
+      if (mounted) {
+        state = FamilyProfilesState(members: state.members, errorMessage: _message(e));
+      }
+    }
+  }
+
+  String _message(Object e) {
+    try {
+      return (e as dynamic).message as String;
+    } catch (_) {
+      return 'No se pudo sincronizar los perfiles familiares.';
+    }
   }
 }

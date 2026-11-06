@@ -94,7 +94,6 @@ class PayIdActionCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return Material(
       color: AppColors.white,
-      borderRadius: BorderRadius.circular(AppDimensions.radiusCard),
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(AppDimensions.radiusCard),
         side: const BorderSide(

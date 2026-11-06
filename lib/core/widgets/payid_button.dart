@@ -1,14 +1,10 @@
 import 'package:flutter/material.dart';
+
 import '../constants/app_colors.dart';
 import '../constants/app_dimensions.dart';
 import '../constants/app_typography.dart';
 
-enum PayIdButtonVariant {
-  primary,
-  secondary,
-  tertiary,
-  danger,
-}
+enum PayIdButtonVariant { primary, secondary, tertiary, danger }
 
 enum PayIdButtonSize {
   s, // 40 px
@@ -56,7 +52,8 @@ class PayIdButton extends StatelessWidget {
 
     Widget child;
     if (isLoading) {
-      final spinnerColor = variant == PayIdButtonVariant.secondary ||
+      final spinnerColor =
+          variant == PayIdButtonVariant.secondary ||
               variant == PayIdButtonVariant.tertiary
           ? AppColors.primaryInstitutional
           : AppColors.white;
@@ -74,10 +71,11 @@ class PayIdButton extends StatelessWidget {
             ),
           ),
           const SizedBox(width: AppDimensions.space8),
-          Text(
-            loadingText ?? 'Procesando...',
-            style: AppTypography.label.copyWith(
-              color: spinnerColor,
+          Flexible(
+            child: Text(
+              loadingText ?? 'Procesando...',
+              overflow: TextOverflow.ellipsis,
+              style: AppTypography.label.copyWith(color: spinnerColor),
             ),
           ),
         ],
@@ -89,7 +87,14 @@ class PayIdButton extends StatelessWidget {
         children: [
           Icon(icon, size: AppDimensions.iconControl),
           const SizedBox(width: AppDimensions.space8),
-          Text(text),
+          Flexible(
+            child: Text(
+              text,
+              maxLines: 2,
+              overflow: TextOverflow.ellipsis,
+              textAlign: TextAlign.center,
+            ),
+          ),
         ],
       );
     } else {
@@ -125,7 +130,9 @@ class PayIdButton extends StatelessWidget {
             foregroundColor: AppColors.primaryInstitutional,
             disabledForegroundColor: AppColors.outline,
             side: BorderSide(
-              color: effectiveOnPressed == null ? AppColors.line : AppColors.primaryInstitutional,
+              color: effectiveOnPressed == null
+                  ? AppColors.line
+                  : AppColors.primaryInstitutional,
               width: 1.5,
             ),
             minimumSize: Size(isFullWidth ? double.infinity : 0, _height),
@@ -181,4 +188,3 @@ class PayIdButton extends StatelessWidget {
     );
   }
 }
-

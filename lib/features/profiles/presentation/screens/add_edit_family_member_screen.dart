@@ -83,7 +83,18 @@ class _AddEditFamilyMemberScreenState extends ConsumerState<AddEditFamilyMemberS
       notes: _notesController.text.trim().isEmpty ? null : _notesController.text.trim(),
     );
 
-    await ref.read(familyProfilesControllerProvider.notifier).addMember(newMember);
+    try {
+      await ref.read(familyProfilesControllerProvider.notifier).addMember(newMember);
+    } catch (e) {
+      if (mounted) {
+        String message = 'No se pudo registrar al familiar.';
+        try {
+          message = (e as dynamic).message as String;
+        } catch (_) {}
+        PayIdSnackBar.showError(context, message);
+      }
+      return;
+    }
 
     if (mounted) {
       PayIdSnackBar.showSuccess(

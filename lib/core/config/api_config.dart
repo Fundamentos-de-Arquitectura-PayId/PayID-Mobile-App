@@ -58,5 +58,11 @@ class ApiConfig {
       '/notifications/user/$userId';
 
   static const String supportTickets = '/support/tickets';
-  static const String health = '/health';
+
+  static const String familyMembers = '/family/members';
+  static String familyMember(String id) => '/family/members/$id';
+
+  /// El health check vive en la raíz del servidor (sin el prefijo /api)
+  static String get healthUrl =>
+      '${baseUrl.replaceFirst(RegExp(r'/api/?$'), '')}/health';
 }

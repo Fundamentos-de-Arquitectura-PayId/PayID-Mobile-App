@@ -91,6 +91,23 @@ class ApiClient {
     }
   }
 
+  Future<dynamic> delete(
+    String path, {
+    dynamic data,
+    Map<String, dynamic>? queryParameters,
+  }) async {
+    try {
+      final response = await dio.delete(
+        path,
+        data: data,
+        queryParameters: queryParameters,
+      );
+      return _processResponse(response);
+    } on DioException catch (e) {
+      throw _processDioError(e);
+    }
+  }
+
   dynamic _processResponse(Response response) {
     final statusCode = response.statusCode ?? 500;
     final data = response.data;
