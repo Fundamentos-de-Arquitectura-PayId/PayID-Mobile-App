@@ -30,7 +30,7 @@ El proyecto está estructurado con estricta separación de capas y responsabilid
 ```text
 lib/
 ├── core/
-│   ├── config/          # ApiConfig con endpoints y URL dinámica por plataforma
+│   ├── config/          # ApiConfig: URL del backend en Render y endpoints
 │   ├── constants/       # AppColors, AppTypography, AppDimensions
 │   ├── di/              # Inyección de dependencias (Riverpod)
 │   ├── errors/          # Failures y Exceptions tipadas
@@ -69,8 +69,25 @@ lib/
 ## 🚀 Requisitos y Configuración
 
 ### Prerrequisitos
-- **Flutter SDK**: 3.29+ / Dart 3.7+
-- **Backend**: ASP.NET Core 9 (`PayID-Backend-main`) corriendo en el puerto 5117.
+- **Flutter SDK**: 3.47.9 (stable) / Dart ^3.13.7, la misma versión usada en CI.
+- **Backend**: ASP.NET Core 9 desplegado en Render. No hace falta correrlo localmente.
+
+### Backend
+| | URL |
+|---|---|
+| Servidor | `https://payid-backend-n573.onrender.com` |
+| API (URL base de la app) | `https://payid-backend-n573.onrender.com/api` |
+| Documentación (Swagger) | `https://payid-backend-n573.onrender.com/swagger/index.html` |
+| Health check | `https://payid-backend-n573.onrender.com/health` |
+
+La URL se define en `lib/core/config/api_config.dart`. Swagger es solo documentación, no la URL base. La app añade `/api` a la raíz del servidor y envía el JWT del login en `Authorization: Bearer <token>`. No se necesita ninguna clave ni secreto en la app.
+
+Para apuntar a otro servidor sin tocar el código, pasa su raíz (sin `/api`) al compilar:
+```bash
+flutter build apk --release --dart-define=API_BASE_URL=https://otro-servidor.com
+```
+
+> El backend está en el plan gratuito de Render: si estuvo inactivo, la primera petición puede tardar ~30 s mientras el servidor arranca.
 
 ### Instalación de dependencias
 ```bash
@@ -98,6 +115,22 @@ flutter run -d windows
 # En Google Chrome (Web):
 flutter run -d chrome
 ```
+
+### Generar el APK
+**Localmente:**
+```bash
+flutter build apk --release
+# Resultado: build/app/outputs/flutter-apk/app-release.apk
+```
+
+**Con GitHub Actions** (`.github/workflows/build-apk.yml`): el workflow se ejecuta en cada push a `main` y también manualmente. Corre `flutter analyze`, `flutter test` y `flutter build apk --release`.
+
+1. En GitHub abre **Actions → Build APK**.
+2. Pulsa **Run workflow**, elige la rama `main` y confirma (o simplemente haz push a `main`).
+3. Cuando termine en verde, abre la ejecución y en la sección **Artifacts** descarga `payid-app-release-<n>`.
+4. Descomprime el `.zip` y copia `app-release.apk` al teléfono. Para instalarlo, Android pedirá permitir apps de origen desconocido.
+
+Los artefactos se conservan 30 días. El APK está firmado con la clave de depuración, sirve para pruebas e instalación directa pero no para publicarlo en Google Play.
 
 ---
 

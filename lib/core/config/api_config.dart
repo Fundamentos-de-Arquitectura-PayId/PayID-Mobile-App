@@ -6,8 +6,15 @@ import 'package:flutter/foundation.dart';
 class ApiConfig {
   ApiConfig._();
 
-  /// URL base del backend en la nube (Render)
-  static const String renderBaseUrl = 'https://payid-backend-n573.onrender.com/api';
+  /// Raíz del servidor desplegado en Render (sin `/api`).
+  /// Se puede cambiar al compilar con `--dart-define=API_BASE_URL=https://otro-servidor`.
+  static const String serverUrl = String.fromEnvironment(
+    'API_BASE_URL',
+    defaultValue: 'https://payid-backend-n573.onrender.com',
+  );
+
+  /// URL base de la API: todas las rutas del backend cuelgan de `/api`
+  static const String renderBaseUrl = '$serverUrl/api';
 
   /// URL base para desarrollo local (opcional)
   static String get localBaseUrl {

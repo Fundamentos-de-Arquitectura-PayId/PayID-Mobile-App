@@ -1,4 +1,6 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android">
+    <!-- Necesario en release para llamar al backend (debug lo agrega automáticamente) -->
+    <uses-permission android:name="android.permission.INTERNET"/>
     <application
         android:label="payid_mobile"
         android:name="${applicationName}"
