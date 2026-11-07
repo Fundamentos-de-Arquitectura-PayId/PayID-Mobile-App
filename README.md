@@ -1,6 +1,25 @@
 # PayID — Aplicación Móvil Flutter
 
+[![Descargar APK](https://img.shields.io/badge/Descargar-APK%20Android-00763E?style=for-the-badge&logo=android&logoColor=white)](https://github.com/Fundamentos-de-Arquitectura-PayId/PayID-Mobile-App/releases/latest/download/App-PayID.apk)
+[![Última versión](https://img.shields.io/github/v/release/Fundamentos-de-Arquitectura-PayId/PayID-Mobile-App?style=for-the-badge&label=versi%C3%B3n&color=10B981)](https://github.com/Fundamentos-de-Arquitectura-PayId/PayID-Mobile-App/releases/latest)
+
 Ecosistema digital que centraliza la identidad, los documentos personales, la billetera digital y los pagos de estudiantes de educación superior y padres de familia en el Perú. Desarrollada con **Flutter**, **Dart** y **Clean Architecture**, siguiendo fielmente el sistema de diseño oficial de **Figma (PayID 1.0)** y conectada al backend real **ASP.NET Core 9**.
+
+---
+
+## 📲 Descargar la app
+
+| | Enlace |
+|---|---|
+| Descarga directa (Android) | [App-PayID.apk](https://github.com/Fundamentos-de-Arquitectura-PayId/PayID-Mobile-App/releases/latest/download/App-PayID.apk) |
+| Todas las versiones | [Releases](https://github.com/Fundamentos-de-Arquitectura-PayId/PayID-Mobile-App/releases) |
+
+**Instalación en Android:**
+1. Abre el enlace de descarga desde el navegador del teléfono.
+2. Abre el archivo `App-PayID.apk`.
+3. Si Android lo pide, permite «Instalar apps de orígenes desconocidos» para tu navegador.
+4. Pulsa **Instalar**. Si aparece un aviso de Google Play Protect, elige **Instalar de todas formas**: es normal en apps que no vienen de la Play Store.
+5. Crea tu cuenta desde la app o inicia sesión con tu correo o celular.
 
 ---
 
@@ -123,12 +142,15 @@ flutter build apk --release
 # Resultado: build/app/outputs/flutter-apk/app-release.apk
 ```
 
-**Con GitHub Actions** (`.github/workflows/build-apk.yml`): el workflow se ejecuta en cada push a `main` y también manualmente. Corre `flutter analyze`, `flutter test` y `flutter build apk --release`.
+**Con GitHub Actions** (`.github/workflows/build-apk.yml`). El workflow corre `flutter analyze`, `flutter test` y `flutter build apk --release`:
 
-1. En GitHub abre **Actions → Build APK**.
-2. Pulsa **Run workflow**, elige la rama `main` y confirma (o simplemente haz push a `main`).
-3. Cuando termine en verde, abre la ejecución y en la sección **Artifacts** descarga `payid-app-release-<n>`.
-4. Descomprime el `.zip` y copia `app-release.apk` al teléfono. Para instalarlo, Android pedirá permitir apps de origen desconocido.
+| Disparador | Resultado |
+|---|---|
+| Push a `main` | APK como artefacto de la ejecución (**Actions → ejecución → Artifacts**). |
+| **Actions → Build APK → Run workflow** | Además publica o actualiza el Release `v<versión de pubspec>` con `App-PayID.apk`. |
+| Push de un tag `v*` (ej. `git tag v1.1.0 && git push origin v1.1.0`) | Publica el Release con ese tag. |
+
+El botón **Descargar APK** de arriba siempre apunta al Release más reciente, así que no hay que cambiar el enlace al sacar una versión nueva. Para una versión nueva, sube `version:` en `pubspec.yaml` (ej. `1.1.0+2`) y ejecuta el workflow.
 
 Los artefactos se conservan 30 días. El APK está firmado con la clave de depuración, sirve para pruebas e instalación directa pero no para publicarlo en Google Play.
 

@@ -1,12 +1,16 @@
 name: Build APK
 
+# - Push a main: compila y deja el APK como artefacto de la ejecución.
+# - Run workflow (manual) o push de un tag v*: además publica/actualiza el
+#   GitHub Release con App-PayID.apk (enlace de descarga directa del README).
 on:
   push:
     branches: [main]
+    tags: ['v*']
   workflow_dispatch:
 
 permissions:
-  contents: read
+  contents: write
 
 concurrency:
   group: build-apk-${{ github.ref }}
@@ -16,7 +20,7 @@ jobs:
   build:
     name: Build release APK
     runs-on: ubuntu-latest
-    timeout-minutes: 45
+    timeout-minutes: 60
 
     steps:
       - name: Checkout
@@ -46,12 +50,40 @@ jobs:
         run: flutter test
 
       - name: Build release APK
-        run: flutter build apk --release
+        run: |
+          flutter build apk --release
+          cp build/app/outputs/flutter-apk/app-release.apk App-PayID.apk
 
       - name: Upload APK artifact
         uses: actions/upload-artifact@v4
         with:
-          name: payid-app-release-${{ github.run_number }}
-          path: build/app/outputs/flutter-apk/app-release.apk
+          name: App-PayID-${{ github.run_number }}
+          path: App-PayID.apk
           if-no-files-found: error
           retention-days: 30
+
+      - name: Resolve release version
+        if: github.event_name == 'workflow_dispatch' || startsWith(github.ref, 'refs/tags/v')
+        id: version
+        run: |
+          if [[ "$GITHUB_REF" == refs/tags/v* ]]; then
+            echo "tag=${GITHUB_REF_NAME}" >> "$GITHUB_OUTPUT"
+          else
+            # version: 1.0.0+1 -> v1.0.0
+            v=$(grep -E '^version:' pubspec.yaml | sed -E 's/version:[[:space:]]*([^+]+).*/\1/')
+            echo "tag=v${v}" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Publish GitHub Release
+        if: steps.version.outputs.tag != ''
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ${{ steps.version.outputs.tag }}
+          name: PayID Mobile ${{ steps.version.outputs.tag }}
+          target_commitish: ${{ github.sha }}
+          make_latest: true
+          files: App-PayID.apk
+          body: |
+            APK de PayID Mobile conectado al backend `https://payid-backend-n573.onrender.com`.
+
+            **Instalación (Android):** descarga `App-PayID.apk` desde el teléfono, ábrelo y, si Android lo pide, permite instalar apps de orígenes desconocidos.
