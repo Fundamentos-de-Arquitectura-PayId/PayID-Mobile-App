@@ -12,6 +12,7 @@ Ecosistema digital que centraliza la identidad, los documentos personales, la bi
 | | Enlace |
 |---|---|
 | Descarga directa (Android) | [App-PayID.apk](https://github.com/Fundamentos-de-Arquitectura-PayId/PayID-Mobile-App/releases/latest/download/App-PayID.apk) |
+| Versión v1.0.0 | [App-PayID.apk (v1.0.0)](https://github.com/Fundamentos-de-Arquitectura-PayId/PayID-Mobile-App/releases/download/v1.0.0/App-PayID.apk) · [notas del Release](https://github.com/Fundamentos-de-Arquitectura-PayId/PayID-Mobile-App/releases/tag/v1.0.0) |
 | Todas las versiones | [Releases](https://github.com/Fundamentos-de-Arquitectura-PayId/PayID-Mobile-App/releases) |
 
 **Instalación en Android:**
